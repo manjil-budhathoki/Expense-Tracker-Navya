@@ -57,3 +57,16 @@ These are the commands and configurations we used to set up the foundation.
     - Created `ExpenseListView` (READ): Uses `get_queryset` to ensure users only see their own data.
     - Created `ExpenseCreateView` (CREATE): Uses `form_valid` to auto-assign the logged-in user.
     - Applied `LoginRequiredMixin` to all views to restrict access.
+
+## 4. CRUD Functionality (Completed)
+
+15. **Implemented CRUD Views (`expenses/views.py`):**
+    - **Create:** `ExpenseCreateView` with Date Picker widget.
+    - **Read:** `ExpenseListView` showing tabular data.
+    - **Update:** `ExpenseUpdateView` reusing the form logic.
+    - **Delete:** `ExpenseDeleteView` with a confirmation page.
+
+16. **Frontend Templates (`expenses/templates/expenses/`):**
+    - `expense_list.html`: Displays table, success messages, and action buttons.
+    - `expense_form.html`: Shared form for creating and editing.
+    - `expense_confirm_delete.html`: Safety check before deletion.

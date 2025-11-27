@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Expense</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
+        input, select { width: 100%; padding: 8px; margin: 5px 0 15px; }
+        button { padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Add New Expense</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        
+        {{ form.as_p }}
+        
+        <button type="submit">Save Expense</button>
+        <a href="{% url 'expense-list' %}" style="margin-left: 10px;">Cancel</a>
+    </form>
+</body>
+</html>

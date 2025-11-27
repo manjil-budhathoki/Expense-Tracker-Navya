@@ -2,7 +2,8 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Expense
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.conf import messages
+from django.contrib import messages
+from .forms import ExpenseForm
 
 
 # List view for expenses
@@ -22,7 +23,7 @@ class ExpenseListView(LoginRequiredMixin, ListView):
 class ExpenseCreateView(LoginRequiredMixin, CreateView):
 
     model = Expense
-    fields = ['title', 'amount', 'category', 'date']
+    form_class = ExpenseForm
     template_name = 'expenses/expense_form.html'
     success_url = reverse_lazy('expense-list')
 
@@ -33,3 +34,36 @@ class ExpenseCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Expense added successfully!")
         return super().form_valid(form)
 
+class ExpenseUpdateView(LoginRequiredMixin, UpdateView):
+
+    model = Expense
+    form_class = ExpenseForm
+    template_name = 'expenses/expense_form.html'
+    success_url = reverse_lazy('expense-list')
+
+
+    def get_queryset(self):
+        
+        # allow to edit only if it's their own expense
+        return Expense.objects.filter(user=self.request.user)
+    
+    def form_valid(self, form):
+        
+        messages.success(self.request, "Expense updated successfully!")
+        return super().form_valid(form)
+
+class ExpenseDeleteView(LoginRequiredMixin, DeleteView):
+
+    model = Expense
+    template_name = 'expenses/expense_confirm_delete.html'
+    success_url = reverse_lazy('expense-list')
+
+    def get_queryset(self):
+
+        # allow to delete only if it's their own expense
+        return Expense.objects.filter(user=self.request.user)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Expense deleted successfully!")
+        return super().delete(request, *args, **kwargs)
+    
