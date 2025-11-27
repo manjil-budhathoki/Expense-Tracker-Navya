@@ -1,84 +1,57 @@
-# Expense Tracker Project
+# Django Expense Tracker
 
-## 1. Project Setup Steps
-These are the commands and configurations we used to set up the foundation.
+A secure Django web app for tracking personal expenses with authentication, CRUD operations, and data filtering.
 
-1. **Created Environment:**
-   `conda create --name tracker_env python=3.10`
-   `conda activate tracker_env`
+## Setup Instructions
 
-2. **Installed Django:**
-   `pip install django`
+**1. Install Dependencies**
+```bash
+pip install django
+```
 
-3. **Created Project:**
-   `django-admin startproject expense_tracker .`
+**2. Initialize Database**
+*Important: Run this before starting the server to set up the Custom User Model.*
+```bash
+python manage.py makemigrations expenses
+python manage.py migrate
+```
 
-4. **Created App:**
-   `python manage.py startapp expenses`
+**3. Create Admin User**
+```bash
+python manage.py createsuperuser
+```
 
-5. **Configured Settings (`settings.py`):**
-   - Added `'expenses'` to `INSTALLED_APPS`.
-   - Added `AUTH_USER_MODEL = 'expenses.CustomUser'`.
+**4. Run Server**
+```bash
+python manage.py runserver
+```
+Access the app at: `http://127.0.0.1:8000/`
 
-6. **Created Custom User (`expenses/models.py`):**
-   - Added `CustomUser` class inheriting from `AbstractUser`.
+---
 
-7. **Use SQLite & Enable Auth System:**
-   - These are enabled by default in Django settings.
-   - Verified in `DATABASES` and `INSTALLED_APPS`.
+## 🧪 How to Test
 
-## 2. Model & Database Steps
+1.  **Authentication:**
+    *   Login at `/login/` (or use the **Register** link to create a new user).
+    *   Unauthenticated users are automatically redirected to login.
 
-8. **Created Expense Model (`expenses/models.py`):**
-   - Defined `Expense` class with fields: title, amount, category, date.
-   - Linked to User via `ForeignKey`.
+2.  **CRUD Operations:**
+    *   **Create:** Click "+ Add New Expense". (Negative amounts are blocked by validation).
+    *   **Read:** View your personal expense list on the dashboard.
+    *   **Update:** Click "Edit" to modify an expense.
+    *   **Delete:** Click "Delete" and confirm the action.
 
-9. **Initialized Database:**
-   - `python manage.py makemigrations expenses` (Prepared the database scripts).
-   - `python manage.py migrate` (Created the SQLite file and Auth tables).
+3.  **Bonus Features:**
+    *   **Filtering:** Use the dropdowns to filter by **Category** or **Date Range**.
+    *   **Totals:** Observe the "Total Expenses" value updating dynamically based on filters.
 
-10. **Created Admin User:**
-    - `python manage.py createsuperuser` (Tested the auth system).
+---
 
-## 3. Authentication & Views Implementation
+## Explanation of Approach
 
-11. **Configured URLs:**
-    - Created `expenses/urls.py` and mapped `LoginView`, `LogoutView`.
-    - Included app URLs in the main `expense_tracker/urls.py`.
+*   **Custom User Model:** Implemented `expenses.CustomUser` at the start to ensure strict database integrity and scalability.
+*   **Security:** Used `LoginRequiredMixin` on all views and filtered QuerySets strictly by `request.user` to prevent data leakage between users.
+*   **Class-Based Views:** Utilized Django's standard `ListView`, `CreateView`, `UpdateView`, and `DeleteView` for clean, standard code.
+*   **Validation:** Enforced positive amounts using `MinValueValidator` in the model.
 
-12. **Auth Settings (`settings.py`):**
-    - Set `LOGIN_REDIRECT_URL = 'expense-list'`.
-    - Set `LOGIN_URL = 'login'` to automatically redirect unauthenticated users.
-
-13. **Created Templates:**
-    - Added `expenses/templates/expenses/login.html` with error handling.
-
-14. **Implemented Views (`expenses/views.py`):**
-    - Created `ExpenseListView` (READ): Uses `get_queryset` to ensure users only see their own data.
-    - Created `ExpenseCreateView` (CREATE): Uses `form_valid` to auto-assign the logged-in user.
-    - Applied `LoginRequiredMixin` to all views to restrict access.
-
-## 4. CRUD Functionality (Completed)
-
-15. **Implemented CRUD Views (`expenses/views.py`):**
-    - **Create:** `ExpenseCreateView` with Date Picker widget.
-    - **Read:** `ExpenseListView` showing tabular data.
-    - **Update:** `ExpenseUpdateView` reusing the form logic.
-    - **Delete:** `ExpenseDeleteView` with a confirmation page.
-
-16. **Frontend Templates (`expenses/templates/expenses/`):**
-    - `expense_list.html`: Displays table, success messages, and action buttons.
-    - `expense_form.html`: Shared form for creating and editing.
-    - `expense_confirm_delete.html`: Safety check before deletion.
-
-## 5. Functionality & Refinements
-
-17. **Data Validation (`expenses/models.py`):**
-    - Imported `MinValueValidator` from `django.core.validators`.
-    - Applied `MinValueValidator(0.01)` to the `amount` field to ensure positive values.
-    - Utilized Django's default behavior to reject empty Titles or Amounts.
-
-18. **Feature Implementation:**
-    - **Filtering:** Modified `ExpenseListView` to accept a `?category=` query parameter.
-    - **Case-Insensitivity:** Used `category__iexact` in the queryset to match categories regardless of capitalization (e.g., 'Food' matches 'FOOD').
-    - **UI Enhancements:** Added a Filter Form dropdown in the template and a "Clear Filter" logic.
+*For a detailed step-by-step development log, please see [Summary.md](Summary.md).*
