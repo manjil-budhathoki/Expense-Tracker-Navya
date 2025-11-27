@@ -3,40 +3,134 @@
 <head>
     <title>My Expenses</title>
     <style>
-        body { font-family: sans-serif; margin: 40px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        .btn { padding: 8px 15px; text-decoration: none; background: #007bff; color: white; border-radius: 4px; }
-        .btn-logout { background: #dc3545; }
-        .messages { color: green; margin-bottom: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f4f6f9; }
+        
+        /* --- Layout & containers --- */
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        /* --- Header & Buttons --- */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px; }
+        h2 { margin: 0; color: #333; }
+        
+        .btn { padding: 8px 16px; text-decoration: none; border-radius: 4px; border: none; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-primary:hover { background: #0056b3; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #a71d2a; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-outline-danger { color: #dc3545; background: none; border: 1px solid #dc3545; }
+        
+        /* --- Messages --- */
+        .messages { padding: 12px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 20px; }
+        
+        /* --- Filter Section (Bonus) --- */
+        .filter-section { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            border: 1px solid #e9ecef; 
+            border-radius: 6px; 
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        .filter-group label { font-size: 12px; font-weight: bold; color: #555; }
+        .filter-group select, .filter-group input { padding: 8px; border: 1px solid #ced4da; border-radius: 4px; }
+
+        .total-box { 
+            text-align: right; 
+            font-size: 1.25rem; 
+            font-weight: bold; 
+            color: #2c3e50; 
+            margin-bottom: 15px; 
+            padding: 10px; 
+            background-color: #e9ecef; 
+            border-radius: 4px; 
+        }
+
+        /* --- Table --- */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border-bottom: 1px solid #dee2e6; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; color: #495057; }
+        tr:hover { background-color: #f1f1f1; }
+        .empty-state { text-align: center; padding: 40px; color: #6c757d; font-style: italic; }
     </style>
 </head>
 <body>
 
+<div class="container">
+
     <div class="header">
         <h2>My Expenses</h2>
         <div>
-            <span>Welcome, {{ user.username }}!</span>
+            <span style="margin-right: 15px; color: #555;">Welcome, <strong>{{ user.username }}</strong>!</span>
             <form action="{% url 'logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-logout">Logout</button>
+                <button type="submit" class="btn btn-danger">Logout</button>
             </form>
         </div>
     </div>
 
+
     {% if messages %}
         <div class="messages">
             {% for message in messages %}
-                <p>{{ message }}</p>
+                <div>{{ message }}</div>
             {% endfor %}
         </div>
     {% endif %}
 
-    <p>
-        <a href="{% url 'expense-create' %}" class="btn">+ Add New Expense</a>
-    </p>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'expense-create' %}" class="btn btn-primary">+ Add New Expense</a>
+    </div>
+
+
+    <form method="get" class="filter-section">
+        <div class="filter-group">
+            <label>Category</label>
+            <select name="category">
+                <option value="">All Categories</option>
+
+                <option value="Food" {% if request.GET.category == 'Food' %}selected{% endif %}>Food</option>
+                <option value="Travel" {% if request.GET.category == 'Travel' %}selected{% endif %}>Travel</option>
+                <option value="Utilities" {% if request.GET.category == 'Utilities' %}selected{% endif %}>Utilities</option>
+                <option value="Entertainment" {% if request.GET.category == 'Entertainment' %}selected{% endif %}>Entertainment</option>
+                <option value="Other" {% if request.GET.category == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>From Date</label>
+            <input type="date" name="start_date" value="{{ request.GET.start_date }}">
+        </div>
+
+        <div class="filter-group">
+            <label>To Date</label>
+            <input type="date" name="end_date" value="{{ request.GET.end_date }}">
+        </div>
+
+        <div class="filter-group">
+            <label>&nbsp;</label> <!-- Spacer -->
+            <button type="submit" class="btn btn-secondary">Filter</button>
+        </div>
+
+
+        {% if request.GET.category or request.GET.start_date or request.GET.end_date %}
+        <div class="filter-group">
+            <label>&nbsp;</label>
+            <a href="{% url 'expense-list' %}" style="color: #dc3545; text-decoration: none; padding-top: 10px; display:inline-block;">✖ Clear Filters</a>
+        </div>
+        {% endif %}
+    </form>
+
+
+    <div class="total-box">
+        Total Expenses: ${{ total_amount|floatformat:2 }}
+    </div>
+
 
     <table>
         <thead>
@@ -56,17 +150,21 @@
                 <td>{{ expense.category }}</td>
                 <td>${{ expense.amount }}</td>
                 <td>
-                    <a href="{% url 'expense-edit' expense.id %}" style="color: blue;">Edit</a> | 
-                    <a href="{% url 'expense-delete' expense.id %}" style="color: red;">Delete</a>
+                    <a href="{% url 'expense-edit' expense.id %}" style="color: #007bff; margin-right: 10px; text-decoration: none;">Edit</a>
+                    <a href="{% url 'expense-delete' expense.id %}" style="color: #dc3545; text-decoration: none;">Delete</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" style="text-align:center;">No expenses found. Add one!</td>
+                <td colspan="5" class="empty-state">
+                    No expenses found matching your criteria.
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+</div>
 
 </body>
 </html>

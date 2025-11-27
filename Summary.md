@@ -82,3 +82,15 @@ These are the commands and configurations we used to set up the foundation.
     - **Filtering:** Modified `ExpenseListView` to accept a `?category=` query parameter.
     - **Case-Insensitivity:** Used `category__iexact` in the queryset to match categories regardless of capitalization (e.g., 'Food' matches 'FOOD').
     - **UI Enhancements:** Added a Filter Form dropdown in the template and a "Clear Filter" logic.
+
+## 6. Bonus Features (Completed)
+
+19. **User Registration System:**
+    - Created `UserRegistrationForm` in `expenses/forms.py` inheriting from Django's `UserCreationForm` to correctly support the Custom User model.
+    - Implemented `RegisterView` and `register.html` to allow public sign-ups without using the command line.
+    - Linked registration to the Login page for seamless onboarding.
+
+20. **Advanced Filtering & Reporting:**
+    - **Date Range Filter:** Updated `get_queryset` logic in `ExpenseListView` to filter expenses by `start_date` and `end_date`.
+    - **Dynamic Totals:** Implemented `get_context_data` using Django's `aggregate(Sum('amount'))` to calculate and display the total cost of currently filtered expenses.
+    - **Responsive UI:** Updated `expense_list.html` with a comprehensive filter bar and a summary display box.
