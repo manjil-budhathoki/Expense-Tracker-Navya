@@ -22,3 +22,20 @@ These are the commands and configurations we used to set up the foundation.
 
 6. **Created Custom User (`expenses/models.py`):**
    - Added `CustomUser` class inheriting from `AbstractUser`.
+
+7. **Use SQLite & Enable Auth System:**
+   - These are enabled by default in Django settings.
+   - Verified in `DATABASES` and `INSTALLED_APPS`.
+
+## 2. Model & Database Steps
+
+8. **Created Expense Model (`expenses/models.py`):**
+   - Defined `Expense` class with fields: title, amount, category, date.
+   - Linked to User via `ForeignKey`.
+
+9. **Initialized Database:**
+   - `python manage.py makemigrations expenses` (Prepared the database scripts).
+   - `python manage.py migrate` (Created the SQLite file and Auth tables).
+
+10. **Created Admin User:**
+    - `python manage.py createsuperuser` (Tested the auth system).
