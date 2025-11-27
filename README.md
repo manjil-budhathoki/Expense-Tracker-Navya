@@ -39,3 +39,21 @@ These are the commands and configurations we used to set up the foundation.
 
 10. **Created Admin User:**
     - `python manage.py createsuperuser` (Tested the auth system).
+
+## 3. Authentication & Views Implementation
+
+11. **Configured URLs:**
+    - Created `expenses/urls.py` and mapped `LoginView`, `LogoutView`.
+    - Included app URLs in the main `expense_tracker/urls.py`.
+
+12. **Auth Settings (`settings.py`):**
+    - Set `LOGIN_REDIRECT_URL = 'expense-list'`.
+    - Set `LOGIN_URL = 'login'` to automatically redirect unauthenticated users.
+
+13. **Created Templates:**
+    - Added `expenses/templates/expenses/login.html` with error handling.
+
+14. **Implemented Views (`expenses/views.py`):**
+    - Created `ExpenseListView` (READ): Uses `get_queryset` to ensure users only see their own data.
+    - Created `ExpenseCreateView` (CREATE): Uses `form_valid` to auto-assign the logged-in user.
+    - Applied `LoginRequiredMixin` to all views to restrict access.
